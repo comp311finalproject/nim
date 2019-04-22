@@ -1,5 +1,8 @@
 #pragma once
 // nim.h    Header file for Nim project
+<<<<<<< HEAD
+=======
+
 #include <winsock2.h>
 #include <string>
 
