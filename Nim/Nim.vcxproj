@@ -117,6 +117,19 @@
   <ItemGroup>
     <ClInclude Include="nim.h" />
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="clientMain.cpp" />
+    <ClCompile Include="connectsock.cpp" />
+    <ClCompile Include="getIPAddressInfo.cpp" />
+    <ClCompile Include="getServers.cpp" />
+    <ClCompile Include="nim.cpp" />
+    <ClCompile Include="passivesock.cpp" />
+    <ClCompile Include="serverMain.cpp" />
+    <ClCompile Include="timestamp.cpp" />
+    <ClCompile Include="UDP_recv.cpp" />
+    <ClCompile Include="UDP_send.cpp" />
+    <ClCompile Include="wait.cpp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

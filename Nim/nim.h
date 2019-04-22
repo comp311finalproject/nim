@@ -1,12 +1,12 @@
 #pragma once
 // nim.h    Header file for Nim project
-// Sam Dillin
 #include <winsock2.h>
 #include <string>
 
 #define NIM_QUERY	"Who?"
 #define NIM_NAME	"Name="
 #define NIM_CHALLENGE	"Player="
+#define debug true
 
 static char NIM_UDPPORT[] = "29333";
 
@@ -32,6 +32,6 @@ int UDP_send(SOCKET, const char*, int, const char*, const char*);
 int wait(SOCKET, int, int);
 char* timestamp();
 int getServers(SOCKET, char*, char*, ServerStruct[]);
-int serverMain(int, char*);
-int clientMain(int, char*);
+int serverMain(std::string);
+int clientMain(std::string);
 int getIPAddressInfo(char*, char*);
