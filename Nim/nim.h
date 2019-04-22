@@ -1,6 +1,7 @@
 #pragma once
 // nim.h    Header file for Nim project
 // Sam Dillin
+//Adam Johnson
 #include <winsock2.h>
 #include <string>
 
