@@ -124,6 +124,7 @@
     <ClCompile Include="getServers.cpp" />
     <ClCompile Include="nim.cpp" />
     <ClCompile Include="passivesock.cpp" />
+    <ClCompile Include="playNim.cpp" />
     <ClCompile Include="serverMain.cpp" />
     <ClCompile Include="timestamp.cpp" />
     <ClCompile Include="UDP_recv.cpp" />

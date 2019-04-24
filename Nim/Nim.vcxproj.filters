@@ -53,5 +53,8 @@
     <ClCompile Include="getServers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="playNim.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

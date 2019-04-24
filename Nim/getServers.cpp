@@ -2,8 +2,6 @@
 #include <WinSock2.h>
 #include <iostream>
 
-// Sam Dillin 4/16/2019
-
 // getServers.cpp
 //  Given a socket, a broadcast address and a port number, this function returns the number
 //  of TicTacToe servers as well as an array of structs.  Each struct contains the name, IP_Address and 

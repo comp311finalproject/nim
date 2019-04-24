@@ -12,6 +12,7 @@ int serverMain(int argc, char *argv[], std::string playerName)
 	char host[v4AddressSize];
 	char port[portNumberSize];
 	char responseStr[MAX_SEND_BUFFER];
+	int winner;
 
 	s = passivesock(NIM_UDPPORT, "udp");
 
@@ -40,9 +41,26 @@ int serverMain(int argc, char *argv[], std::string playerName)
 				std::cout << std::endl << "You have been challenged by " << startOfName + strlen(NIM_CHALLENGE) << std::endl;
 			}
 
-			// Play the game.  You are the 'O' player
-			int winner = playNim();//FIGURE OUT PARAMETERS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-			finished = true;
+			// Give option for user to decline
+			char sendBuffer[MAX_SEND_BUFFER];
+			std::cout << "Would you like to accept the challenge from " << startOfName + strlen(NIM_CHALLENGE) << "? YES or NO" << std::endl;
+			std::cin >> sendBuffer;
+			UDP_send(s, sendBuffer, MAX_SEND_BUFFER, host, port);
+			if (strcmp(sendBuffer, "YES")) {
+				wait(s, 2, 0);
+				UDP_recv(s, responseStr, MAX_RECV_BUFFER, host, port);
+				if (strcmp(responseStr, NIM_CONFIRMATION)) {
+					winner = playNim();//FIGURE OUT PARAMETERS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+					finished = true;
+				}
+				else
+				{
+					std::cout << "Connection error. Waiting for another challenge.." << std::endl;
+				}
+			}
+			else {
+				std::cout << "Waiting for another challenge..." << std::endl;
+			}
 		}
 
 		if (!finished) {

@@ -70,7 +70,7 @@ int clientMain(std::string playerName)
 			strcpy_s(host, serverArray[answer - 1].host.c_str());
 			strcpy_s(port, serverArray[answer - 1].port.c_str());
 
-			// Append playerName to the TicTacToe_CHALLENGE string & send a challenge to host:port
+			// Append playerName to the NIM_CHALLENGE string & send a challenge to host:port
 			char buffer[MAX_SEND_BUFFER];
 			strcpy_s(buffer, NIM_CHALLENGE);
 			strcat_s(buffer, playerName.c_str());
@@ -79,8 +79,36 @@ int clientMain(std::string playerName)
 				std::cout << timestamp() << " - Sent: " << buffer << " to " << host << ":" << port << std::endl;
 			}
 
-			// Play the game.  You are the 'X' player
-			int winner = playNim(); //FIGURE OUT PARAMETERS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+			// waiting for confirmation from other player server
+			if ( wait(s, 2, 0) && len != 0) {
+
+				char recvHost[v4AddressSize];
+				char recvPort[portNumberSize];
+				char buffer[MAX_RECV_BUFFER];
+				UDP_recv(s, buffer, MAX_RECV_BUFFER, recvHost, recvPort);
+
+				if (buffer == "YES") {
+					// Play the game.  You are the 'X' player
+					char sendConfirm[MAX_SEND_BUFFER] = NIM_CONFIRMATION;
+					len = UDP_send(s, sendConfirm, MAX_SEND_BUFFER, recvHost, recvPort);
+					if (len != 0) {
+						int winner = playNim();
+					}
+					else {
+						cout << "Confirmation did not send. Try again." << endl << endl;
+					}
+				}
+				else {
+					cout << "Challenge Denied." << endl;
+				}
+			}
+			else {
+			
+				cout << "Communication Error. Try again." << endl << endl;
+			}
+
+			
+			
 		}
 	}
 

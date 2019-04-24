@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
 	std::cout << "What is your name?";
 	std::getline(std::cin, playerName);
 
-	char choiceStr[80], newline;
+	char choiceStr[81], newline;
 	int choice = 0;
 	const int QUIT = 3;
 	do {
