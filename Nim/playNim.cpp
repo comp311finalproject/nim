@@ -7,6 +7,7 @@
 #include <iostream>
 #include <string>
 #include <random>
+#include <time.h>
 
 using std::string;
 using std::cout;
@@ -15,18 +16,21 @@ using std::cin;
 
 void initializeBoard(char board[MAX_NIM_BOARD_SIZE])
 {
+	srand(time(NULL));
 	int numPiles = rand() % 6 + 3;
-	board[0] = numPiles;
+	board[0] = numPiles + '0';
 	for (int i = 0; i < numPiles; ++i){
 
 		int numRocks = rand() % 20 + 1;;
 
-		char rocks[2];
-		rocks[0] = numRocks / 10;
-		rocks[1] = numRocks % 10;
+		char rocks[3];
+		rocks[0] = (numRocks / 10) + '0';
+		rocks[1] = (numRocks % 10) + '0';
 		board[1 + 2 * i] = rocks[0];
 		board[2 * (i + 1)] = rocks[1];
 	}
+	board[numPiles * 2 + 1] = '\0';
+	cout << board;
 }
 
 bool validateMove(char board[MAX_NIM_BOARD_SIZE], char move[MAX_SEND_BUFFER])
@@ -49,7 +53,7 @@ bool validateMove(char board[MAX_NIM_BOARD_SIZE], char move[MAX_SEND_BUFFER])
 		rockPileNumBuffer += board[2 * (pile + 1)];
 		int currentRocksInPile = stoi(rockPileNumBuffer);
 
-		if (rocksToRemove > currentRocksInPile || pile == 0) 
+		if (rocksToRemove > currentRocksInPile || pile == -1) 
 		{
 			result = false;
 		}	
@@ -62,18 +66,15 @@ void updateBoard(char board[MAX_NIM_BOARD_SIZE], char move[MAX_SEND_BUFFER])
 {
 	int pileToMove = move[0] - '0' -1;
 
-	std::string rockNumBuffer(1, move[1]);
-	rockNumBuffer += move[2];
-	int rocksToRemove = stoi(rockNumBuffer);
+	int rocksToRemove = (move[1] - '0') * 10 + (move[2] - '0');
 
-	string rockPileNumBuffer(1, board[1 + 2 * pileToMove]);
-	rockPileNumBuffer += board[2 * (pileToMove + 1)];
-	int currentRocksInPile = stoi(rockPileNumBuffer);
+	int currentRocksInPile = (board[1 + 2 * pileToMove] - '0') * 10 + (board[2 * (pileToMove + 1)] - '0');
 
 	currentRocksInPile -= rocksToRemove;
 
-	char newRockNum[2];
-	_itoa_s(currentRocksInPile, newRockNum, 10);
+	char newRockNum[3];
+	newRockNum[0] = (currentRocksInPile / 10) + '0';
+	newRockNum[1] = (currentRocksInPile % 10) + '0';
 
 	board[1 + 2 * pileToMove] = newRockNum[0];
 	board[2 * (pileToMove + 1)] = newRockNum[1];
@@ -100,9 +101,9 @@ void displayBoard(char board[MAX_NIM_BOARD_SIZE])
 		{
 			std::cout << "  ";
 		}
-		std::cout << "(" << numRocks << ")" << " <- Rock Pile #" << (i + 1) << std::endl << "----------------------------------------";
+		std::cout << "(" << numRocks << ")" << " <- Rock Pile #" << (i + 1) << std::endl;
 	}
-	std::cout << std::endl;
+	std::cout << "----------------------------------------" << std::endl;
 }
 
 bool check4Win(char board[MAX_NIM_BOARD_SIZE])
@@ -174,7 +175,7 @@ void getLocalUserMove(char board[MAX_NIM_BOARD_SIZE], char newMove[MAX_SEND_BUFF
 		}
 	} while (!validMove);
 
-	newMove = playerMove;
+	strcpy_s(newMove, MAX_SEND_BUFFER, playerMove);
 }
 
 int playNim(SOCKET s, std::string remoteIP, std::string remotePort, int localPlayer)
@@ -191,6 +192,7 @@ int playNim(SOCKET s, std::string remoteIP, std::string remotePort, int localPla
 	bool isComment = true;
 	int status;
 
+	//Receives board if client side
 	if (localPlayer == CLIENT_PLAYER) {
 		std::cout << "FIRST MOVE" << std::endl;
 		opponent = SERVER_PLAYER;
@@ -199,21 +201,23 @@ int playNim(SOCKET s, std::string remoteIP, std::string remotePort, int localPla
 		wait(s, 2, 0);
 		UDP_recv(s, board, MAX_SEND_BUFFER, dummyRecvBuffer, dummyRecvBuffer2);
 	}
+	//Sends board if server side
 	else {
 		std::cout << "NEXT MOVE" << std::endl;
 		opponent = CLIENT_PLAYER;
 		myMove = false;
 
 		initializeBoard(board);
-		UDP_send(s, board, MAX_SEND_BUFFER, remoteIP.c_str(), remotePort.c_str());
+		UDP_send(s, board, MAX_NIM_BOARD_SIZE, remoteIP.c_str(), remotePort.c_str());
 	}
 	displayBoard(board);
 
+
+	//TO DO: MAKE FORFEIT WORK
+	//TO DO: CHECK WINS
 	while (winner == 0) {
 
 		if (myMove) {
-			// Get my move & display board
-
 			//Loop sending comments until move is sent
 			while (isComment) {
 				getLocalUserMove(board, move);
@@ -259,14 +263,26 @@ int playNim(SOCKET s, std::string remoteIP, std::string remotePort, int localPla
 				winner = ABORT;
 			}
 		}
-		myMove = !myMove;   // Switch whose move it is
 
 		if (winner == ABORT) {
 			std::cout << timestamp() << " - No response from opponent or invalid move received. You WIN!" << std::endl;
 		}
 		else {
-			winner = check4Win(board);
+			if (check4Win(board))
+			{
+				if (myMove)
+				{
+					winner = localPlayer;
+				}
+				else
+				{
+					winner = opponent;
+				}
+				
+			}
 		}
+
+		myMove = !myMove;   // Switch whose move it is
 
 		if (winner == localPlayer)
 			std::cout << "You WIN!" << std::endl;

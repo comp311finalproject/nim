@@ -79,15 +79,15 @@ int clientMain(std::string playerName)
 				std::cout << timestamp() << " - Sent: " << buffer << " to " << host << ":" << port << std::endl;
 			}
 
+			char recvHost[v4AddressSize];
+			char recvPort[portNumberSize];
+			char recvBuffer[MAX_RECV_BUFFER];
+			int status = wait(s, 30, 0);
+			UDP_recv(s, recvBuffer, MAX_RECV_BUFFER, recvHost, recvPort);
 			// waiting for confirmation from other player server
-			if ( wait(s, 2, 0) && len != 0) {
+			if (status > 0 && len != 0) {
 
-				char recvHost[v4AddressSize];
-				char recvPort[portNumberSize];
-				char buffer[MAX_RECV_BUFFER];
-				UDP_recv(s, buffer, MAX_RECV_BUFFER, recvHost, recvPort);
-
-				if (buffer == "YES") {
+				if (strstr(recvBuffer, "YES") != NULL) {
 					// Play the game.  You are the 'X' player
 					char sendConfirm[MAX_SEND_BUFFER] = NIM_CONFIRMATION;
 					len = UDP_send(s, sendConfirm, MAX_SEND_BUFFER, recvHost, recvPort);

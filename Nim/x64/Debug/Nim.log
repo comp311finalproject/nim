@@ -1,1 +1,3 @@
-﻿  Nim.vcxproj -> C:\Users\cunderwood1\Documents\GitHub\nim\x64\Debug\Nim.exe
+﻿  playNim.cpp
+c:\users\cunderwood1\documents\github\nim\nim\playnim.cpp(19): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+  Nim.vcxproj -> C:\Users\cunderwood1\Documents\GitHub\nim\x64\Debug\Nim.exe

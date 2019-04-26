@@ -46,7 +46,7 @@ int serverMain(std::string playerName)
 			std::cout << "Would you like to accept the challenge from " << startOfName + strlen(NIM_CHALLENGE) << "? YES or NO" << std::endl;
 			std::cin >> sendBuffer;
 			UDP_send(s, sendBuffer, MAX_SEND_BUFFER, host, port);
-			if (strcmp(sendBuffer, "YES")) {
+			if (strstr(sendBuffer, "YES") != NULL) {
 				wait(s, 2, 0);
 				UDP_recv(s, responseStr, MAX_RECV_BUFFER, host, port);
 				if (strcmp(responseStr, NIM_CONFIRMATION)) {
