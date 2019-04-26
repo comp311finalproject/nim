@@ -43,7 +43,7 @@ int UDP_recv(SOCKET, char*, int, char*, char*);
 int UDP_send(SOCKET, const char*, int, const char*, const char*);
 int wait(SOCKET, int, int);
 char* timestamp();
-int getServers(SOCKET, char*, char*, ServerStruct[]);
+int getServers(SOCKET, const char*, const char*, ServerStruct[]);
 int serverMain(std::string);
 int clientMain(std::string);
 int getIPAddressInfo(char*, char*);

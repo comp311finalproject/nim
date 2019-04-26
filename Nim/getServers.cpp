@@ -43,20 +43,14 @@ int getServers(SOCKET s, const char *broadcastAddress, const char *remotePort, S
 
 		// Ignoring responses that were sent using the broadcastAddress.  We need specific IP Address
 		while (status > 0 && numBytesRecvd > 0 && strcmp(host, broadcastAddress) != 0) {
-			int checknum = strstr(recvBuffer, "Name=") > 0;
-
-			if (checknum > 0) {
-
-				char name[MAX_RECV_BUFFER];
-				std::string hold = recvBuffer;
-				hold.erase(0, 5);
-				strncpy_s(name, hold.c_str(), hold.size());
-
-				serverArray[numServers].name = name;
+			
+			char validation[6] = "Name=";
+			if (strstr(recvBuffer, validation) != 0)
+			{
+				serverArray[numServers].name = recvBuffer + 5;
 				serverArray[numServers].host = host;
 				serverArray[numServers].port = port;
 				numServers++;
-
 			}
 			// Now, we'll see if there is another response.
 			status = wait(s, 2, 0);
