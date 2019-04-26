@@ -1,6 +1,6 @@
-// playTicTacToe.cpp
+// playNim.cpp
 // This set of functions are used to actually play the game.
-// Play starts with the function: playTicTacToe() which is defined below
+// Play starts with the function: playNim() which is defined below
 
 #include "nim.h"
 #include <WinSock2.h>
@@ -33,37 +33,50 @@ bool validateMove(char board[MAX_NIM_BOARD_SIZE], char move[MAX_SEND_BUFFER])
 {
 	bool result = true;
 
-	if (strlen(move) != MAX_NIM_MOVE_SIZE) {
+	if (strlen(move) != MAX_NIM_MOVE_SIZE) 
+	{
 		result = false;
 	}
-	else {
-	
-		int pile = move[0] - '0';
+	else 
+	{
+		int pile = move[0] - '0' - 1;
+
 		std::string rockNumBuffer(1, move[1]);
 		rockNumBuffer += move[2];
-		
 		int rocksToRemove = stoi(rockNumBuffer);
 		
 		string rockPileNumBuffer(1, board[1 + 2 * pile]);
 		rockPileNumBuffer += board[2 * (pile + 1)];
 		int currentRocksInPile = stoi(rockPileNumBuffer);
 
-		if (rocksToRemove > currentRocksInPile || pile == 0) {
+		if (rocksToRemove > currentRocksInPile || pile == 0) 
+		{
 			result = false;
 		}	
 	}
 	return result;
 }
 
+// BE SURE TO VALIDATE BEFORE UPDATING!!!!!!!!!!!
+void updateBoard(char board[MAX_NIM_BOARD_SIZE], char move[MAX_SEND_BUFFER]) 
+{
+	int pileToMove = move[0] - '0' -1;
 
-// TO DO 4/24/2019
-void updateBoard(char board[MAX_NIM_BOARD_SIZE], char move[MAX_SEND_BUFFER]) {
+	std::string rockNumBuffer(1, move[1]);
+	rockNumBuffer += move[2];
+	int rocksToRemove = stoi(rockNumBuffer);
 
-	if (validateMove(board, move)) {
-	
-	
-	}
+	string rockPileNumBuffer(1, board[1 + 2 * pileToMove]);
+	rockPileNumBuffer += board[2 * (pileToMove + 1)];
+	int currentRocksInPile = stoi(rockPileNumBuffer);
 
+	currentRocksInPile -= rocksToRemove;
+
+	char newRockNum[2];
+	_itoa_s(currentRocksInPile, newRockNum, 10);
+
+	board[1 + 2 * pileToMove] = newRockNum[0];
+	board[2 * (pileToMove + 1)] = newRockNum[1];
 }
 
 
@@ -92,143 +105,155 @@ void displayBoard(char board[MAX_NIM_BOARD_SIZE])
 	std::cout << std::endl;
 }
 
-int check4Win(char board[10])
+bool check4Win(char board[MAX_NIM_BOARD_SIZE])
 {
-	int winner = noWinner;
+	bool winner = true;
 
-	// Check for vertical winners
-	int i = 1;
-	while (winner == noWinner && i < 4) {
-		if (board[i] == board[i + 3] && board[i] == board[i + 6]) {
-			winner = (board[i] == 'X') ? winnerIsX : winnerIsO;
-		}
-		i++;
-	}
-
-	// Check for horizontal winners
-	i = 1;
-	while (winner == noWinner && i < 8) {
-		if (board[i] == board[i + 1] && board[i] == board[i + 2]) {
-			winner = (board[i] == 'X') ? winnerIsX : winnerIsO;
-		}
-		i += 3;
-	}
-
-	// Check for diagonal winners
-	if (winner == noWinner) {
-		if ((board[1] == board[5] && board[1] == board[9]) ||
-			(board[3] == board[5] && board[3] == board[7])) {
-			winner = (board[5] == 'X') ? winnerIsX : winnerIsO;
+	int numPiles = board[0] - '0';
+	for (int i = 1; i < (numPiles * 2) + 1 && winner == true; ++i) 
+	{
+		if (board[i] != '0') 
+		{
+			winner = false;
 		}
 	}
-
-	// Check for tie
-	i = 1;
-	int numMoves = 0;
-	while (i < 10) {
-		if ((board[i] == 'X' || board[i] == 'O')) {
-			numMoves++;
-		}
-		i++;
-	}
-	if (winner == noWinner && numMoves == 9)
-		winner = TIE;
-
 
 	return winner;
 }
 
-int getLocalUserMove(char board[10], int player)
+
+void getLocalUserMove(char board[MAX_NIM_BOARD_SIZE], char newMove[MAX_SEND_BUFFER])
 {
-	int move;
-	char move_str[80];
+	char playerMove[MAX_SEND_BUFFER];
 
-	std::cout << "Where do you want to place your ";
-	char mark = (player == PLAYER_X) ? 'X' : 'O';
-	std::cout << mark << "? " << std::endl;
+	//dislay options
+	std::cout << "It's your move!" << endl << "Move: Send a move in the format mnn" << endl
+		<< "Comment: Send a comment in format CSome comment" << endl
+		<< "Forfeit: Send F" << endl;
 
+	//check if valid input
+	bool validMove = false;
 	do {
 		std::cout << "Your move? ";
-		std::cin >> move_str;
-		move = atoi(move_str);
-		if (move < 1 || move > 9) std::cout << "Invalid move.  Try again." << std::endl;
-		else {
-			if (board[move] == 'X' || board[move] == 'O') {
-				move = 0;
-				std::cout << "I'm sorry, but that square is already occupied." << std::endl;
+		std::cin >> playerMove;
+		switch (playerMove[0])
+		{
+		case '1':
+		case '2':
+		case '3':
+		case '4':
+		case '5':
+		case '6':
+		case '7':
+		case '8':
+		case '9':
+			if (validateMove(board, playerMove))
+			{
+				validMove = true;
 			}
+			else
+			{
+				cout << "Incorrect move format. Try again." << endl;
+			}
+			break;
+		case 'F':
+			validMove = true;
+			break;
+		case 'C':
+			if (strlen(playerMove) > 80)
+			{
+				cout << "Your comment is too long. Send a comment of 80 characters or less." << endl;
+			}
+			else
+			{
+				validMove = true;
+			}
+			break;
+		default:
+			cout << "Invalid input. Try again." << endl;
 		}
-	} while (move < 1 || move > 9);
+	} while (!validMove);
 
-	return move;
+	newMove = playerMove;
 }
 
-int playNim(SOCKET s, std::string serverName, std::string remoteIP, std::string remotePort, int localPlayer)
+int playNim(SOCKET s, std::string remoteIP, std::string remotePort, int localPlayer)
 {
 	// This function plays the game and returns the value: winner.  This value 
 	// will be one of the following values: noWinner, xWinner, oWinner, TIE, ABORT
-	int winner = noWinner;
-	char board[10];
+	int winner = 0;
+	char board[MAX_NIM_BOARD_SIZE];
 	int opponent;
-	int move;
+	char move[MAX_SEND_BUFFER];
 	bool myMove;
+	char dummyRecvBuffer[MAX_RECV_BUFFER];
+	char dummyRecvBuffer2[MAX_RECV_BUFFER];
+	bool isComment = true;
+	int status;
 
-	if (localPlayer == PLAYER_X) {
-		std::cout << "Playing as X" << std::endl;
-		opponent = PLAYER_O;
+	if (localPlayer == CLIENT_PLAYER) {
+		std::cout << "FIRST MOVE" << std::endl;
+		opponent = SERVER_PLAYER;
 		myMove = true;
+
+		wait(s, 2, 0);
+		UDP_recv(s, board, MAX_SEND_BUFFER, dummyRecvBuffer, dummyRecvBuffer2);
 	}
 	else {
-		std::cout << "Playing as O" << std::endl;
-		opponent = PLAYER_X;
+		std::cout << "NEXT MOVE" << std::endl;
+		opponent = CLIENT_PLAYER;
 		myMove = false;
-	}
 
-	initializeBoard(board);
+		initializeBoard(board);
+		UDP_send(s, board, MAX_SEND_BUFFER, remoteIP.c_str(), remotePort.c_str());
+	}
 	displayBoard(board);
 
-	while (winner == noWinner) {
+	while (winner == 0) {
+
 		if (myMove) {
 			// Get my move & display board
-			move = getLocalUserMove(board, localPlayer);
-			std::cout << "Board after your move:" << std::endl;
-			updateBoard(board, move, localPlayer);
-			displayBoard(board);
 
-			// Send move to opponent
-/****
-	Task 1: "move" is an integer that was assigned a value (from 1 to 9) in the previous code segment.
-			 Add code here to convert "move" to a null-terminated C-string and send it to your opponent at remoteIP using remotePort.
-****/
-			char moveAsStringBuffer[MAX_SEND_BUFFER];
-			_itoa_s(move, moveAsStringBuffer, 10);
-			UDP_send(s, moveAsStringBuffer, MAX_SEND_BUFFER, remoteIP.c_str(), remotePort.c_str());
-
-
+			//Loop sending comments until move is sent
+			while (isComment) {
+				getLocalUserMove(board, move);
+				if (move[0] != 'C') {
+					isComment = false;
+				}
+				if(move[0] != 'F'){
+					UDP_send(s, move, MAX_SEND_BUFFER, remoteIP.c_str(), remotePort.c_str());
+				}
+			}
+			isComment = true;
+			if(move[0] == 'F'){
+				winner = opponent;
+				cout << "You have forfeited." << endl;
+			}
+			else {
+				std::cout << "Board after your move:" << std::endl;
+				updateBoard(board, move);
+				displayBoard(board);
+			}
 		}
+
+		// Recieving the move
 		else {
 			std::cout << "Waiting for your opponent's move..." << std::endl << std::endl;
-			//Get opponent's move & display resulting board
-			int status = wait(s, WAIT_TIME, 0);
-			if (status > 0) {
-				/****
-				Task 2: (i) Insert code inside this IF statement that will accept a null-terminated C-string from your
-						opponent that represents their move.  Convert that string to an integer and then
-						(ii) call a function that will update the game board (see above) using your opponent's move, and
-						(iii) call a function that will display the updated board on your screen.
-				****/
-				char receivedMoveAsStringBuffer[MAX_RECV_BUFFER];
-				char receivedHost[v4AddressSize];
-				char receivedPort[portNumberSize];
 
-
-				UDP_recv(s, receivedMoveAsStringBuffer, MAX_SEND_BUFFER, receivedHost, receivedPort);
-				int receiveMoveAsInt = atoi(receivedMoveAsStringBuffer);
-
-				updateBoard(board, receiveMoveAsInt, opponent);
+			while (isComment) {
+				status = wait(s, WAIT_TIME, 0);
+				UDP_recv(s, move, MAX_RECV_BUFFER, dummyRecvBuffer, dummyRecvBuffer2);
+				if (status == 0 || move[0] != 'C') {
+					isComment = false;
+				}
+				else {
+					cout << "Comment: " << move << endl;
+				}
+			}
+			isComment = true;
+			if (status > 0 && validateMove(board, move)) {
+				updateBoard(board, move);
 				displayBoard(board);
-
-
 			}
 			else {
 				winner = ABORT;
@@ -237,7 +262,7 @@ int playNim(SOCKET s, std::string serverName, std::string remoteIP, std::string 
 		myMove = !myMove;   // Switch whose move it is
 
 		if (winner == ABORT) {
-			std::cout << timestamp() << " - No response from opponent.  Aborting the game..." << std::endl;
+			std::cout << timestamp() << " - No response from opponent or invalid move received. You WIN!" << std::endl;
 		}
 		else {
 			winner = check4Win(board);
@@ -245,8 +270,6 @@ int playNim(SOCKET s, std::string serverName, std::string remoteIP, std::string 
 
 		if (winner == localPlayer)
 			std::cout << "You WIN!" << std::endl;
-		else if (winner == TIE)
-			std::cout << "It's a tie." << std::endl;
 		else if (winner == opponent)
 			std::cout << "I'm sorry.  You lost" << std::endl;
 	}

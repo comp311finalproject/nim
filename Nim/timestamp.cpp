@@ -2,6 +2,7 @@
 
 #include <time.h>
 #include <string.h>
+#include "nim.h"
 const int TIMEBUF_SIZE = 26;
 
 void chomp(char* s)

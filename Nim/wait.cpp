@@ -5,7 +5,7 @@
  *------------------------------------------------------------------------------*/
 #include <iostream>
 #include <winsock2.h>
-
+#include "nim.h"
 
 
 int wait(SOCKET s, int seconds, int msec) {

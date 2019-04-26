@@ -16,7 +16,7 @@ static char NIM_UDPPORT[] = "29333";
 
 const int v4AddressSize = 16;
 const int portNumberSize = 10;
-const int WAIT_TIME = 120;
+const int WAIT_TIME = 30;
 const int MAX_SEND_BUFFER = 2048;
 const int MAX_RECV_BUFFER = 2048;
 const int MAX_SERVERS = 100;
@@ -28,6 +28,7 @@ const int MIN_NIM_BOARD_SIZE = 3;
 const int MAX_NIM_PILE_SIZE = 20;
 const int MIN_NIM_PILE_SIZE = 1;
 const int MAX_NIM_MOVE_SIZE = 3;
+const int ABORT = -1;
 
 struct ServerStruct {
 	std::string name;
@@ -35,7 +36,7 @@ struct ServerStruct {
 	std::string port;
 };
 
-int playNim(SOCKET, char*, char*, char*, int);
+int playNim(SOCKET, std::string, std::string, int);
 SOCKET connectsock(const char*, const char*, const char*);
 SOCKET passivesock(const char*, const char*);
 int UDP_recv(SOCKET, char*, int, char*, char*);

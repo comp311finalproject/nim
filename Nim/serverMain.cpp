@@ -50,7 +50,7 @@ int serverMain(int argc, char *argv[], std::string playerName)
 				wait(s, 2, 0);
 				UDP_recv(s, responseStr, MAX_RECV_BUFFER, host, port);
 				if (strcmp(responseStr, NIM_CONFIRMATION)) {
-					winner = playNim();//FIGURE OUT PARAMETERS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+					winner = playNim(s, host, port, SERVER_PLAYER);
 					finished = true;
 				}
 				else

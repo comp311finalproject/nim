@@ -7,6 +7,7 @@
 #include <iostream>
 #include <WS2tcpip.h>
 #include <iphlpapi.h>
+#include "nim.h"
 
 #pragma comment (lib, "iphlpapi.lib")
 

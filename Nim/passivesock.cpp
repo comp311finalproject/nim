@@ -4,6 +4,7 @@
  */
 #include <winsock2.h>
 #include <iostream>
+#include "nim.h"
 
 SOCKET passivesock(const char *service, const char *protocol) {
 	// [IN] service : char array containing service type as name (eg. ECHO) or port number (eg. 7)

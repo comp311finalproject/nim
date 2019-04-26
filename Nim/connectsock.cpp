@@ -4,6 +4,7 @@
 #include <WinSock2.h>
 #include <WS2tcpip.h>
 #include <iostream>
+#include "nim.h"
 
 SOCKET connectsock(const char *host, const char *service, const char *protocol) {
 	// Parameter List:

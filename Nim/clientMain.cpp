@@ -92,7 +92,7 @@ int clientMain(std::string playerName)
 					char sendConfirm[MAX_SEND_BUFFER] = NIM_CONFIRMATION;
 					len = UDP_send(s, sendConfirm, MAX_SEND_BUFFER, recvHost, recvPort);
 					if (len != 0) {
-						int winner = playNim();
+						int winner = playNim(s, recvHost, recvPort, CLIENT_PLAYER);
 					}
 					else {
 						cout << "Confirmation did not send. Try again." << endl << endl;

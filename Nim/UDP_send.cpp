@@ -4,6 +4,7 @@
 #include <iostream>
 #include <WinSock2.h>
 #include <WS2tcpip.h>
+#include "nim.h"
 
 int UDP_send(SOCKET s, const char *buf, int numBytesToSend, const char *host, const char *service)
 {	// Parameter List:

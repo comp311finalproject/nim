@@ -4,6 +4,7 @@
 #include <iostream>
 #include <WinSock2.h>
 #include <WS2tcpip.h>
+#include "nim.h"
 
 #define MAX_IP_ADDRESS_LEN 16
 #define MAX_PORT_LEN 6

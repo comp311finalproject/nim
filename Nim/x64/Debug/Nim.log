@@ -1,0 +1,19 @@
+﻿  UDP_recv.cpp
+  UDP_send.cpp
+c:\users\cunderwood1\documents\github\nim\nim\udp_send.cpp(48): warning C4309: 'return': truncation of constant value
+  clientMain.cpp
+c:\users\cunderwood1\documents\github\nim\nim\clientmain.cpp(77): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+  connectsock.cpp
+  getIPAddressInfo.cpp
+  getServers.cpp
+  nim.cpp
+  passivesock.cpp
+  playNim.cpp
+  serverMain.cpp
+c:\users\cunderwood1\documents\github\nim\nim\servermain.cpp(34): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+  timestamp.cpp
+  wait.cpp
+  Generating Code...
+clientMain.obj : error LNK2019: unresolved external symbol "int __cdecl getServers(unsigned __int64,char *,char *,struct ServerStruct * const)" (?getServers@@YAH_KPEAD1QEAUServerStruct@@@Z) referenced in function "int __cdecl clientMain(class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> >)" (?clientMain@@YAHV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z)
+nim.obj : error LNK2019: unresolved external symbol "int __cdecl serverMain(class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> >)" (?serverMain@@YAHV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z) referenced in function main
+C:\Users\cunderwood1\Documents\GitHub\nim\x64\Debug\Nim.exe : fatal error LNK1120: 2 unresolved externals
